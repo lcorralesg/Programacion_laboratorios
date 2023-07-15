@@ -1,0 +1,118 @@
+{% extends './base.html' %}
+
+{% block title %}Programacion de Laboratorios{% endblock %}
+
+{% block body %}
+
+<div class="d-flex justify-content-end fixed-bottom bg-light p-3">
+  <div class="p-2">
+    <p>Clima: {{ temperatura|floatformat:"0.2f" }}°C - {{ descripcion }}</p>
+    <p>Fecha y Hora actual: {{ fecha_hora_actual }}</p>
+  </div>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
+    {% if message.tags == 'error' %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+        <h2>Programar un Laboratorio:</h2>
+        <div class="card">
+          <div class="card-body">
+            <form action="/registrar" method="POST">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="txtlaboratorio" class="form-label">Laboratorio:</label>
+                <select name="txtlaboratorio" class="form-select" id="txtlaboratorio">
+                  {% for laboratorio in laboratorios %}
+                  <option value="{{ laboratorio.id }}">{{ laboratorio.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="txtcurso_dictado" class="form-label">Curso Dictado:</label>
+                <select name="txtcurso_dictado" class="form-select" id="txtcurso_dictado">
+                  {% for curso_dictado in cursos_dictados %}
+                  <option value="{{ curso_dictado.id }}">{{ curso_dictado.curso.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="txtfecha" class="form-label">Fecha:</label>
+                <input type="date" name="txtfecha" class="form-control" id="txtfecha">
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="txthora_inicio" class="form-label">Hora de Inicio:</label>
+                    <input type="time" name="txthora_inicio" class="form-control" id="txthora_inicio">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="txthora_fin" class="form-label">Hora de Fin:</label>
+                    <input type="time" name="txthora_fin" class="form-control" id="txthora_fin">
+                  </div>
+                </div>
+              </div>
+              <div class="text-center mt-4">
+                <button type="submit" class="btn btn-outline-success">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+    
+
+      <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+        <h2>Horario:</h2>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead class="table-primary">
+              <tr>
+                <th>Laboratorio</th>
+                <th>Curso Dictado</th>
+                <th>Fecha</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Fin</th>
+                <th>Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in labs %}
+              <tr>
+                <td>{{ d.laboratorio }}</td>
+                <td>{{ d.curso_dictado }}</td>
+                <td>{{ d.fecha }}</td>
+                <td>{{ d.hora_inicio }}</td>
+                <td>{{ d.hora_fin }}</td>
+                <td>
+                  <a href="{% url 'Laboratorios:editar' d.id %}" class="btn btn-outline-primary btn-sm">Editar</a>
+                  <a href="{% url 'Laboratorios:eliminar' d.id %}" class="btn btn-outline-danger btn-sm">Eliminar</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+</div>
+
+
+{% endblock %}
